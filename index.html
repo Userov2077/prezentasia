@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Esil Project Lab — проектная лаборатория</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #eef5ff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* CANVAS — ВЫРАЗИТЕЛЬНАЯ АНИМАЦИЯ */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* эффект стекла */
+        .glass-panel {
+            background: rgba(15, 25, 45, 0.65);
+            backdrop-filter: blur(12px) saturate(180%);
+            border-radius: 2rem;
+            border: 1px solid rgba(72, 187, 255, 0.25);
+            transition: border-color 0.2s;
+        }
+        .glass-panel:hover {
+            border-color: rgba(0, 212, 255, 0.6);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+
+        section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        /* типографика */
+        h1 {
+            font-size: 3.8rem;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #FFFFFF, #94c0ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            letter-spacing: -0.01em;
+            border-left: 4px solid #2f9eff;
+            padding-left: 1.3rem;
+        }
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .badge-univ {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.2);
+            backdrop-filter: blur(4px);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(0,212,255,0.4);
+            margin-bottom: 24px;
+        }
+        .btn-primary {
+            background: #1f6fb0;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+        }
+        .btn-primary:hover {
+            background: #2a7fc2;
+            transform: translateY(-2px);
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .project-card {
+            background: rgba(8, 18, 35, 0.75);
+            backdrop-filter: blur(14px);
+            border-radius: 1.8rem;
+            padding: 1.8rem;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            transition: transform 0.2s;
+        }
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0,212,255,0.7);
+        }
+        .prize-badge {
+            background: #2c4b6e40;
+            border-left: 3px solid #ffae42;
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .benefit-card {
+            background: rgba(10, 22, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(66, 153, 225, 0.3);
+        }
+        .benefit-card strong {
+            font-size: 1.2rem;
+            color: #90caf9;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .glass-form {
+            background: rgba(12, 22, 40, 0.8);
+            backdrop-filter: blur(18px);
+            border-radius: 2rem;
+            padding: 2rem;
+            border: 1px solid rgba(0,212,255,0.4);
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 18px;
+            background: rgba(20, 35, 55, 0.9);
+            border: 1px solid #2c5282;
+            border-radius: 60px;
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        input:focus, select:focus {
+            border-color: #3ea5ff;
+        }
+        footer {
+            background: rgba(1, 8, 18, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 2.5rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(0,212,255,0.2);
+        }
+        @media (max-width: 780px) {
+            h1 { font-size: 2.3rem; }
+            h2 { font-size: 1.6rem; }
+            section { padding: 60px 0; }
+        }
+        .floating {
+            animation: floatSoft 6s ease-in-out infinite;
+        }
+        @keyframes floatSoft {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+            100% { transform: translateY(0px); }
+        }
+        .delay-1 { animation-delay: 1s; }
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+<div class="content">
+    <!-- Hero секция (только одна кнопка) -->
+    <section style="padding-top: 100px;">
+        <div class="container">
+            <div class="badge-univ">Esil University — проектная лаборатория</div>
+            <h1>Методология работы<br>со стартапами и проектами</h1>
+            <p style="font-size: 1.2rem; max-width: 700px; margin: 20px 0 24px; opacity: 0.9;">Студенты любых специальностей: IT, медицина, психология, дизайн, управление. Превращаем экспертизу в готовые проекты, победы в хакатонах и карьерные офферы.</p>
+            <a href="#join" class="btn-primary">→ Стать участником лаборатории</a>
+            <div style="margin-top: 36px; font-size: 0.85rem; background: rgba(0,0,0,0.4); display: inline-block; padding: 6px 18px; border-radius: 50px;">
+                Партнерства с IT-компаниями | Грантовые конкурсы | Межвузовские хакатоны
+            </div>
+        </div>
+    </section>
+
+    <!-- ПРОБЛЕМА: отсутствие кружка тормозит сильных студентов -->
+    <section class="glass-panel" style="margin: 0 24px 30px 24px; border-radius: 2rem;">
+        <div class="container" style="padding: 40px 28px;">
+            <h2 style="border-left-color: #ff8c42;">Почему кружок нужен прямо сейчас</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 28px;">
+                <div style="flex: 1.2;">
+                    <p style="font-size: 1.05rem; line-height: 1.5;">В Esil University на данный момент <strong>нет системной проектной лаборатории</strong>. Студенты с высоким потенциалом, которые хотят создавать реальные продукты, участвовать в акселераторах и конкурсах, уезжают или переключаются на внешние комьюнити. Это прямая потеря талантов для университета и региона.</p>
+                    <p style="margin-top: 20px; font-size: 1rem;">В ведущих вузах (AITU, Coventry University Kazakhstan, МУИТ, ALT, Назарбаев Университет) работают проектные клубы, которые ежегодно выпускают десятки стартапов и выигрывают гранты. Без такого сообщества мы теряем амбициозных ребят, которые могли бы прославить университет на городских и республиканских соревнованиях.</p>
+                </div>
+                <div style="flex: 0.8; background: rgba(0, 100, 150, 0.2); border-radius: 1.5rem; padding: 20px; text-align: center;">
+                    <span style="font-size: 2.5rem;">⚠️</span>
+                    <p style="font-weight: 600; margin-top: 8px;">Потенциал уходит<br>в другие площадки</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Конкурсы и хакатоны: городской и межвузовский уровень -->
+    <section>
+        <div class="container">
+            <h2>Выход на городские и межвузовские конкурсы</h2>
+            <div class="grid-2col">
+                <div class="project-card">
+                    <h3>Городской уровень</h3>
+                    <p>Хакатоны акимата, стартап-челленджи IT-парков, конкурсы инноваций. С кружком мы формируем заявки, готовим питчи и забираем призовые места. Пример: наш проект PreAct уже получил 1 место — это только начало.</p>
+                    <div class="prize-badge">+ практика реальных переговоров с бизнесом</div>
+                </div>
+                <div class="project-card">
+                    <h3>Межвузовские турниры</h3>
+                    <p>Соревнования между университетами: Battle of Startups, Enactus, SIFE, хакатоны NU, AITU. Без внутренней команды подготовки участвовать почти невозможно. Наша лаборатория станет базой для тренировок и стратегии.</p>
+                    <div class="prize-badge">выход на республиканские финалы и гранты</div>
+                </div>
+            </div>
+            <div class="glass-panel" style="padding: 24px; margin-top: 16px;">
+                <p><strong>Цель:</strong> создать устойчивое сообщество, которое ежесеместрово представляет Esil University на 3–5 внешних конкурсах. У нас уже есть кейсы побед, теперь нужна системная подготовка.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Реальные кейсы (разбор проектов) -->
+    <section id="projects">
+        <div class="container">
+            <h2>Действующие проекты лаборатории (разбор)</h2>
+            <p style="margin-bottom: 1.2rem;">Два примера, которые доказывают: даже без бюджета и команды можно дойти до акселератора и победы. В кружке мы масштабируем этот опыт.</p>
+            <div class="grid-2col">
+                <div class="project-card floating">
+                    <div class="badge-univ" style="margin-bottom: 12px;">акселерация Astana Hub</div>
+                    <h3>PreAct · MedTech + IT</h3>
+                    <p>Старт с одной гипотезы, нулевой бюджет, отсутствие команды. Проект прошёл отбор в акселератор Astana Hub, получил менторскую поддержку и доведён до питча перед инвесторами.</p>
+                    <div class="prize-badge">1 место на университетском конкурсе стартапов + призовые</div>
+                    <p style="margin-top: 12px; font-size: 0.85rem;">Ключевой урок: даже соло-основатель может пройти акселерацию при правильной методологии.</p>
+                </div>
+                <div class="project-card floating delay-1">
+                    <div class="badge-univ" style="margin-bottom: 12px;">MVP за 2 недели</div>
+                    <h3>PsyHub — инструмент для психологов</h3>
+                    <p>Разработан MVP, проведены глубинные интервью с практикующим психологом, получен подтверждённый спрос. Первый клиент готов к пилоту. Проект готовится к конкурсу с призовым фондом.</p>
+                    <div class="prize-badge">Партнёр-психолог + дорожная карта внедрения</div>
+                </div>
+            </div>
+            <div class="glass-panel" style="padding: 18px 24px; margin-top: 20px;">
+                <p><strong>Вывод:</strong> PreAct и PsyHub — это не единичные вспышки, а повторяемый процесс. В лаборатории каждый проект пройдёт этапы: гипотеза → интервью → MVP → акселератор / конкурс.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Что дает участие (расширенный список) -->
+    <section>
+        <div class="container">
+            <h2>Ресурсы и возможности для участников</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card"><strong>Методологическая поддержка</strong> Customer development, юнит-экономика, питч-деки, метрики.</div>
+                <div class="benefit-card"><strong>Нетворкинг с компаниями</strong> Контакты с IT-партнёрами, выпускниками-предпринимателями.</div>
+                <div class="benefit-card"><strong>Грантовые конкурсы</strong> Подготовка заявок на Astana Hub, Фонд науки, молодежные гранты.</div>
+                <div class="benefit-card"><strong>Учебная интеграция</strong> Возможность защиты курсовых и диплома в формате стартап-проекта (по согласованию с кафедрой).</div>
+                <div class="benefit-card"><strong>Портфолио и опыт</strong> Реальный продукт, метрики, этапы разработки — весомый пункт в резюме.</div>
+                <div class="benefit-card"><strong>Подготовка диплома заранее</strong> Выпускная квалификационная работа на базе собственного проекта.</div>
+                <div class="benefit-card"><strong>Стажировки и офферы</strong> Прямые рекомендации и связи с компаниями-партнерами Esil University.</div>
+                <div class="benefit-card"><strong>Команда и комьюнити</strong> Студенты разных факультетов, менторы, совместные воркшопы.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Почему другие вузы уже имеют такие кружки (контекст) -->
+    <section class="glass-panel" style="margin: 0 24px 40px 24px;">
+        <div class="container" style="padding: 40px 28px;">
+            <h2 style="border-left-color: #7bc9ff;">Опыт ведущих университетов</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between;">
+                <div style="flex: 1;">
+                    <p><strong>Astana IT University (AITU):</strong> сильная стартап-среда, ежегодные внутренние акселераторы.</p>
+                    <p style="margin-top: 16px;"><strong>Назарбаев Университет:</strong> собственный бизнес-инкубатор, победы в международных хакатонах.</p>
+                    <p style="margin-top: 16px;"><strong>КБТУ, СДУ, МУИТ, ALT:</strong> активные проектные лаборатории и IT-хабы.</p>
+                </div>
+                <div style="flex: 1; border-left: 1px solid rgba(0,212,255,0.3); padding-left: 24px;">
+                    <p><strong>Esil University пока отстаёт</strong> в этом направлении. Мы теряем амбициозных студентов, которые уходят в другие университетские или городские проекты. Создание кружка — не роскошь, а необходимость для удержания талантов и повышения рейтинга вуза.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Как работает лаборатория: формат -->
+    <div class="container" style="margin: 20px auto;">
+        <div class="glass-panel" style="padding: 32px 36px;">
+            <h2 style="border-left-color: #ffae42;">Формат работы и расписание</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 28px; justify-content: space-between;">
+                <div style="flex:1"><strong>Еженедельные митапы</strong><br>Разбор конкретных проектов, воркшопы по юнит-экономике, презентации, разбор ошибок.</div>
+                <div style="flex:1"><strong>Кросс-функциональные команды</strong><br>Сбор групп под задачи: разработка, дизайн, аналитика, маркетинг.</div>
+                <div style="flex:1"><strong>Подготовка к конкурсам</strong><br>Питч-тренировки, оформление заявок, стратегия участия в хакатонах.</div>
+            </div>
+            <div style="margin-top: 30px; background: rgba(0, 150, 200, 0.2); border-radius: 24px; padding: 16px; text-align: center;">
+                Первое открытое собрание — анонс в чате после регистрации.
+            </div>
+        </div>
+    </div>
+
+    <!-- ФОРМА: ТОЛЬКО СТОЛБЦЫ ИЗ ТАБЛИЦЫ (ФИО, Группа, Курс, Номер WhatsApp) -->
+    <section id="join">
+        <div class="container">
+            <div class="glass-form" style="max-width: 760px; margin: 0 auto; text-align: center;">
+                <div class="badge-univ">набор в Esil Project Lab</div>
+                <h2 style="border-left: none; padding-left: 0; margin-bottom: 0.5rem;">Присоединиться к сообществу</h2>
+                <p style="margin-bottom: 28px;">Заполните форму — мы пришлем детали организационной встречи и ссылку на закрытый чат. Участие бесплатное, открыто для студентов любых специальностей.</p>
+                <form id="signupForm" style="display: flex; flex-direction: column; gap: 18px;">
+                    <input type="text" id="fioField" placeholder="ФИО" required>
+                    <input type="text" id="groupField" placeholder="Группа" required>
+                    <input type="text" id="courseField" placeholder="Курс" required>
+                    <input type="tel" id="whatsappField" placeholder="Номер WhatsApp" required>
+                    <button type="submit" class="btn-primary" id="submitBtn" style="width: 100%;">Подать заявку</button>
+                    <p style="font-size: 0.7rem; opacity: 0.7">После регистрации вы получите приглашение на вводную встречу.</p>
+                </form>
+                <div id="formMessage" style="margin-top: 1rem; font-weight: 500;"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>Esil Project Lab — проектная лаборатория университета Esil. Методология, партнеры, подготовка к городским и межвузовским хакатонам.</p>
+            <p style="margin-top: 1rem; font-size: 0.75rem;">© 2026 | PreAct, PsyHub — действующие треки. Присоединяйся, чтобы создать следующий.</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+    // === НОВЫЙ КОД: ПРИНУДИТЕЛЬНАЯ ПРОКРУТКА К ВЕРХУ ПРИ ЗАГРУЗКЕ ===
+    // Это гарантирует, что страница всегда будет открываться с самого верха,
+    // даже если в адресной строке есть якорь #join или если было обновление после клика по кнопке.
+    if (window.location.hash === '#join') {
+        // Убираем якорь из адресной строки без перезагрузки страницы
+        history.replaceState(null, null, window.location.pathname + window.location.search);
+    }
+    // Мгновенная прокрутка в самое начало
+    window.scrollTo(0, 0);
+    // Дополнительная страховка: после полной загрузки всех ресурсов (шрифты, canvas) ещё раз прокручиваем наверх
+    window.addEventListener('load', function() {
+        window.scrollTo(0, 0);
+    });
+    // =======================================================
+
+    // Canvas — ЯРКАЯ АНИМАЦИЯ (жидкие контуры, насыщенные линии, блики)
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let time = 0;
+
+    function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function drawBackground() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, width, height);
+        const grad = ctx.createLinearGradient(0, 0, width*0.8, height);
+        grad.addColorStop(0, '#030c1a');
+        grad.addColorStop(1, '#0a1e32');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+
+        const t = time * 0.0025;
+        for (let i = 0; i < 12; i++) {
+            ctx.beginPath();
+            const amp = 45 + Math.sin(t + i) * 22;
+            const freq = 0.0045 + i * 0.0007;
+            const yOffset = height * (0.2 + i * 0.07);
+            ctx.moveTo(0, yOffset + Math.sin(0) * amp);
+            for (let x = 0; x < width; x += 20) {
+                const y = yOffset + Math.sin(x * freq + t + i) * amp + Math.cos(x * 0.003 + t*1.3) * 12;
+                ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = `rgba(70, 180, 255, ${0.18 + Math.sin(t + i)*0.07})`;
+            ctx.lineWidth = 1.8;
+            ctx.stroke();
+        }
+        for (let g = 0; g < 28; g++) {
+            const angle = t * 0.35 + g;
+            const rad = 95 + Math.sin(angle * 1.4) * 38;
+            const x = width * (0.5 + Math.sin(angle * 0.65) * 0.45);
+            const y = height * (0.5 + Math.cos(angle * 0.58) * 0.35);
+            const gradient = ctx.createRadialGradient(x, y, 5, x+10, y-8, rad*0.8);
+            gradient.addColorStop(0, 'rgba(0, 190, 255, 0.1)');
+            gradient.addColorStop(1, 'rgba(0, 70, 140, 0.0)');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(x, y, rad, 0, Math.PI*2);
+            ctx.fill();
+        }
+        for (let p = 0; p < 200; p++) {
+            const phase = (p + t) * 0.5;
+            const x = (Math.sin(phase * 0.28) * 0.45 + 0.5) * width;
+            const y = (Math.cos(phase * 0.24) * 0.4 + 0.6) * height;
+            ctx.beginPath();
+            ctx.arc(x, y, 1.6 + Math.sin(phase)*1.2, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(100, 210, 255, ${0.25 + Math.sin(phase)*0.1})`;
+            ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+    function animate() {
+        time = (time + 1) % 720;
+        drawBackground();
+    }
+    animate();
+
+    // --- ОТПРАВКА В GOOGLE SHEETS: СООТВЕТСТВИЕ СТОЛБЦАМ (ФИО, Группа, Курс, Номер WhatsApp) ---
+    const SHEET_BEST_URL = 'https://api.sheetbest.com/sheets/dec75c68-1eba-4ae3-ab1d-776cea4d84c2';
+    
+    const form = document.getElementById('signupForm');
+    const msgBox = document.getElementById('formMessage');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const fio = document.getElementById('fioField').value.trim();
+        const group = document.getElementById('groupField').value.trim();
+        const course = document.getElementById('courseField').value.trim();
+        const whatsapp = document.getElementById('whatsappField').value.trim();
+        
+        if (!fio || !group || !course || !whatsapp) {
+            msgBox.innerHTML = 'Заполните все поля: ФИО, группа, курс, номер WhatsApp.';
+            msgBox.style.color = '#ffae9e';
+            return;
+        }
+        
+        // Блокируем кнопку и показываем индикатор загрузки
+        submitBtn.disabled = true;
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="loader"></span> Отправка...';
+        
+        try {
+            // Отправляем данные с названиями ключей, которые соответствуют заголовкам таблицы
+            const response = await fetch(SHEET_BEST_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "ФИО": fio,
+                    "Группа": group,
+                    "Курс": course,
+                    "Номер WhatsApp": whatsapp
+                })
+            });
+            
+            if (response.ok) {
+                msgBox.innerHTML = `${fio}, ваша заявка принята! Мы свяжемся с вами в WhatsApp.`;
+                msgBox.style.color = '#b9f6ca';
+                form.reset();
+                setTimeout(() => msgBox.innerHTML = '', 6000);
+            } else {
+                const errorText = await response.text();
+                console.error('Ошибка отправки:', errorText);
+                msgBox.innerHTML = 'Техническая ошибка при отправке. Пожалуйста, попробуйте позже или напишите организаторам напрямую.';
+                msgBox.style.color = '#ffae9e';
+            }
+        } catch (error) {
+            console.error('Ошибка сети:', error);
+            msgBox.innerHTML = 'Ошибка соединения. Проверьте интернет и попробуйте снова.';
+            msgBox.style.color = '#ffae9e';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
+</script>
+<style>
+    ::selection {
+        background: #2f9eff;
+        color: #010101;
+    }
+    .btn-primary, .btn-outline-light {
+        transition: all 0.2s ease;
+    }
+</style>
+</body>
+</html>
